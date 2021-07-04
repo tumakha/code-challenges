@@ -23,7 +23,7 @@ object SNiceStrings {
   import scala.util.matching.Regex
 
   private val vowels: Set[Char] = "aeiou".toSet
-  private val noBadSubstrRegex: Regex = "^(?!.*(ab|cd|pq|xy)).*$".r
+  private val noBadSubstrRegex: Regex = "^((?!ab|cd|pq|xy).)*$".r
 
   def nice(xs: List[String]): Int = xs.count(isNice)
 
