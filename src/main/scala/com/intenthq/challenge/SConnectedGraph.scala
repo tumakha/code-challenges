@@ -1,6 +1,6 @@
 package com.intenthq.challenge
 
-case class Node(value: Int, edges: List[Node] = List.empty)
+case class Node(value: Int, var edges: List[Node] = List.empty)
 
 object SConnectedGraph {
 
@@ -14,7 +14,18 @@ object SConnectedGraph {
   // run(a, b) == true
   // run(a, c) == true
   // run(b, d) == false
-  def run(source: Node, target: Node): Boolean =
-    source == target || source.edges.exists(run(_, target))
+  def run(source: Node, target: Node): Boolean = {
+    var visited: Set[Node] = Set()
+
+    def recur(source: Node): Boolean = {
+      source == target ||
+        (!visited(source) && {
+          visited += source
+          source.edges.exists(recur)
+        })
+    }
+
+    recur(source)
+  }
 
 }
