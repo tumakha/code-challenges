@@ -28,55 +28,55 @@ object SEnigma {
 
     def child(digit: Int): Option[Trie] = Option(children(digit))
 
-    def childGetOrCreate(digit: Int): Trie =
+    def insert(key: Int, char: Char): Unit =
+      key.toString.foldLeft(this) { (node, ch) => node.childGetOrCreate(ch.asDigit) }.char = Some(char)
+
+    private def childGetOrCreate(digit: Int): Trie =
       child(digit).getOrElse {
         val node = new Trie
         children(digit) = node
         node
       }
 
-    def insert(key: Int, char: Char): Unit =
-      key.toString.foldLeft(this) { (node, ch) => node.childGetOrCreate(ch.asDigit) }.char = Some(char)
-
   }
 
-  def deciphe(map: Map[Int, Char])(message: List[Int]): String =
-  {
+  def deciphe(map: Map[Int, Char]): List[Int] => String = {
     val trie = new Trie()
-    map.foreach {
-      case (key, char) => trie.insert(key, char)
-    }
-    val sb = new StringBuilder
+    map.foreach { case (key, char) => trie.insert(key, char) }
 
-    def recur(digits: List[Int], lastChar: Option[Char], lastDigits: List[Int], prevNode: Trie) {
-      digits match {
-        case digit :: tail =>
-          prevNode.child(digit) match {
-            case None =>
-              val newDigits =
-                if (lastChar.nonEmpty) {
-                  sb.append(lastChar.get)
-                  lastDigits ::: digits
-                } else if (lastDigits.nonEmpty) {
-                  sb.append(lastDigits.head)
-                  lastDigits.drop(1) ::: digits
-                } else {
-                  sb.append(digit)
-                  tail
-                }
-              recur(newDigits, None, List(), trie)
-            case Some(node) =>
-              val newLastDigits = if (node.char.isEmpty) lastDigits :+ digit else List()
-              recur(tail, node.char.orElse(lastChar), newLastDigits, node)
-          }
-        case _ =>
-          lastChar.map(sb.append)
-          lastDigits.map(sb.append)
+    message => {
+      val sb = new StringBuilder
+
+      def recur(digits: List[Int], lastChar: Option[Char], lastDigits: List[Int], prevNode: Trie) {
+        digits match {
+          case digit :: tail =>
+            prevNode.child(digit) match {
+              case None =>
+                val newDigits =
+                  if (lastChar.nonEmpty) {
+                    sb.append(lastChar.get)
+                    lastDigits ::: digits
+                  } else if (lastDigits.nonEmpty) {
+                    sb.append(lastDigits.head)
+                    lastDigits.drop(1) ::: digits
+                  } else {
+                    sb.append(digit)
+                    tail
+                  }
+                recur(newDigits, None, List(), trie)
+              case Some(node) =>
+                val newLastDigits = if (node.char.isEmpty) lastDigits :+ digit else List()
+                recur(tail, node.char.orElse(lastChar), newLastDigits, node)
+            }
+          case _ =>
+            lastChar.map(sb.append)
+            lastDigits.map(sb.append)
+        }
       }
-    }
 
-    recur(message, None, List(), trie)
-    sb.toString
+      recur(message, None, List(), trie)
+      sb.toString
+    }
   }
 
 }
