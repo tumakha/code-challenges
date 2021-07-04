@@ -14,6 +14,7 @@ object SConnectedGraph {
   // run(a, b) == true
   // run(a, c) == true
   // run(b, d) == false
-  def run(source: Node, target: Node): Boolean = ???
+  def run(source: Node, target: Node): Boolean =
+    source == target || source.edges.exists(run(_, target))
 
 }
