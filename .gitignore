@@ -59,6 +59,7 @@ project/plugins/project/
 
 # IntelliJ
 /out/
+/.bsp
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
