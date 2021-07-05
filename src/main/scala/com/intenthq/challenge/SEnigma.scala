@@ -70,7 +70,10 @@ object SEnigma {
             }
           case _ =>
             lastChar.map(sb.append)
-            lastDigits.map(sb.append)
+            if (lastDigits.nonEmpty) {
+              sb.append(lastDigits.head)
+              recur(lastDigits.drop(1), None, List(), trie)
+            }
         }
       }
 
