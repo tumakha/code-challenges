@@ -47,33 +47,27 @@ object SEnigma {
     message => {
       val sb = new StringBuilder
 
+      def append(digits: List[Int], lastChar: Option[Char], lastDigits: List[Int]) {
+        val rest = lastDigits ::: digits
+        if (lastChar.nonEmpty) {
+          sb.append(lastChar.get)
+          recur(rest, None, List(), trie)
+        } else if (rest.nonEmpty) {
+          sb.append(rest.head)
+          recur(rest.tail, None, List(), trie)
+        }
+      }
+
       def recur(digits: List[Int], lastChar: Option[Char], lastDigits: List[Int], prevNode: Trie) {
         digits match {
           case digit :: tail =>
             prevNode.child(digit) match {
-              case None =>
-                val newDigits =
-                  if (lastChar.nonEmpty) {
-                    sb.append(lastChar.get)
-                    lastDigits ::: digits
-                  } else if (lastDigits.nonEmpty) {
-                    sb.append(lastDigits.head)
-                    lastDigits.drop(1) ::: digits
-                  } else {
-                    sb.append(digit)
-                    tail
-                  }
-                recur(newDigits, None, List(), trie)
+              case None => append(digits, lastChar, lastDigits)
               case Some(node) =>
                 val newLastDigits = if (node.char.isEmpty) lastDigits :+ digit else List()
                 recur(tail, node.char.orElse(lastChar), newLastDigits, node)
             }
-          case _ =>
-            lastChar.map(sb.append)
-            if (lastDigits.nonEmpty) {
-              sb.append(lastDigits.head)
-              recur(lastDigits.drop(1), None, List(), trie)
-            }
+          case _ => append(List(), lastChar, lastDigits)
         }
       }
 
