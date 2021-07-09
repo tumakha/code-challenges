@@ -76,7 +76,7 @@ object SEnigma {
       }
 
       recur(message, None, List(), trie)
-      sb.toString
+      sb.result()
     }
   }
 
