@@ -1,5 +1,8 @@
 package com.intenthq.challenge
 
+import scala.annotation.tailrec
+import scala.util.Try
+
 object SEnigma {
 
   // We have a system to transfer information from one place to another. This system
@@ -24,9 +27,9 @@ object SEnigma {
 
   class Trie() {
     var char: Option[Char] = None
-    val children: Array[Trie] = Array.ofDim[Trie](10)
+    private val children: Array[Trie] = Array.ofDim[Trie](10)
 
-    def child(digit: Int): Option[Trie] = Option(children(digit))
+    def child(digit: Int): Option[Trie] = Try(children(digit)).toOption
 
     def insert(key: Int, char: Char): Unit =
       key.toString.foldLeft(this) { (node, ch) => node.childGetOrCreate(ch.asDigit) }.char = Some(char)
@@ -58,6 +61,7 @@ object SEnigma {
         }
       }
 
+      @tailrec
       def recur(digits: List[Int], lastChar: Option[Char], lastDigits: List[Int], prevNode: Trie) {
         digits match {
           case digit :: tail =>
